@@ -54,3 +54,53 @@ export function isColor(piece: Piece, color: Color): boolean {
 export function opposite(color: Color): Color {
   return -color as Color
 }
+
+/**
+ * What kind of move this is. A move carries at most one of the castle flags and
+ * may combine PROMOTION with CAPTURE, so these are a bitmask rather than an
+ * enumeration of mutually exclusive cases.
+ */
+export const MOVE_QUIET = 0
+export const MOVE_CAPTURE = 1
+export const MOVE_DOUBLE_PUSH = 2
+export const MOVE_EN_PASSANT = 4
+export const MOVE_CASTLE_KING = 8
+export const MOVE_CASTLE_QUEEN = 16
+export const MOVE_PROMOTION = 32
+
+/**
+ * A single move. Kept as a plain object rather than a packed integer because
+ * the UI reads the fields directly.
+ */
+export interface Move {
+  from: Square
+  to: Square
+  piece: Piece
+  /** EMPTY when nothing is taken. For en passant, the pawn removed in passing. */
+  captured: Piece
+  /** What a pawn promotes to, or 0 when this is not a promotion. */
+  promotion: PieceType | 0
+  /** Bitmask of the MOVE_* flags. */
+  flags: number
+}
+
+export function isCapture(move: Move): boolean {
+  return (move.flags & MOVE_CAPTURE) !== 0
+}
+
+export function isPromotion(move: Move): boolean {
+  return (move.flags & MOVE_PROMOTION) !== 0
+}
+
+export function isCastle(move: Move): boolean {
+  return (move.flags & (MOVE_CASTLE_KING | MOVE_CASTLE_QUEEN)) !== 0
+}
+
+export function isEnPassant(move: Move): boolean {
+  return (move.flags & MOVE_EN_PASSANT) !== 0
+}
+
+/** True when both moves describe the same board change. */
+export function sameMove(a: Move, b: Move): boolean {
+  return a.from === b.from && a.to === b.to && a.promotion === b.promotion
+}

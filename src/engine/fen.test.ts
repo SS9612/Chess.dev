@@ -11,7 +11,7 @@ import {
 import { START_FEN, parseFen, toFen } from './fen'
 import { BLACK, EMPTY, KING, PAWN, QUEEN, WHITE, makePiece } from './types'
 
-/** Positions used throughout the perft suite later, plus a few edge cases. */
+/** Well-known positions, plus a few edge cases. */
 const FENS = [
   START_FEN,
   'r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1',
