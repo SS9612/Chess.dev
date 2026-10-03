@@ -13,19 +13,33 @@ type BoardProps = {
   moves: Move[]
   lastMove: Move | null
   checkSquare: SquareIndex
+  orientation: 'white' | 'black'
   onChoose: (square: SquareIndex) => void
 }
 
-/** White at the bottom. Rank 8 is the first row. */
-export function Board({ board, selected, moves, lastMove, checkSquare, onChoose }: BoardProps) {
+/** `white` puts white at the bottom. */
+export function Board({
+  board,
+  selected,
+  moves,
+  lastMove,
+  checkSquare,
+  orientation,
+  onChoose,
+}: BoardProps) {
   const targets = new Map<number, SquareTarget>()
   for (const move of moves) {
     targets.set(move.to, isCapture(move) ? 'capture' : 'quiet')
   }
 
+  const ranks = orientation === 'black' ? [0, 1, 2, 3, 4, 5, 6, 7] : [7, 6, 5, 4, 3, 2, 1, 0]
+  const files = orientation === 'black' ? [7, 6, 5, 4, 3, 2, 1, 0] : [0, 1, 2, 3, 4, 5, 6, 7]
+  const leftFile = files[0]
+  const bottomRank = ranks[ranks.length - 1]
+
   const squares = []
-  for (let rank = 7; rank >= 0; rank--) {
-    for (let file = 0; file < 8; file++) {
+  for (const rank of ranks) {
+    for (const file of files) {
       const square = squareOf(file, rank)
       squares.push(
         <Square
@@ -37,8 +51,8 @@ export function Board({ board, selected, moves, lastMove, checkSquare, onChoose 
           last={square === lastMove?.from || square === lastMove?.to}
           inCheck={square === checkSquare}
           target={targets.get(square) ?? null}
-          rankLabel={file === 0 ? String(rank + 1) : undefined}
-          fileLabel={rank === 0 ? FILES[file] : undefined}
+          rankLabel={file === leftFile ? String(rank + 1) : undefined}
+          fileLabel={rank === bottomRank ? FILES[file] : undefined}
           onChoose={onChoose}
         />,
       )

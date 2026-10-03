@@ -1,9 +1,9 @@
 .move-panel {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: var(--space-3);
   min-height: 0;
-  height: 100%;
 }
 
 .move-panel h2 {
