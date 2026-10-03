@@ -11,11 +11,13 @@ type BoardProps = {
   board: BoardState
   selected: SquareIndex | null
   moves: Move[]
+  lastMove: Move | null
+  checkSquare: SquareIndex
   onChoose: (square: SquareIndex) => void
 }
 
 /** White at the bottom. Rank 8 is the first row. */
-export function Board({ board, selected, moves, onChoose }: BoardProps) {
+export function Board({ board, selected, moves, lastMove, checkSquare, onChoose }: BoardProps) {
   const targets = new Map<number, SquareTarget>()
   for (const move of moves) {
     targets.set(move.to, isCapture(move) ? 'capture' : 'quiet')
@@ -32,6 +34,8 @@ export function Board({ board, selected, moves, onChoose }: BoardProps) {
           light={isLightSquare(square)}
           piece={board[square]}
           selected={square === selected}
+          last={square === lastMove?.from || square === lastMove?.to}
+          inCheck={square === checkSquare}
           target={targets.get(square) ?? null}
           rankLabel={file === 0 ? String(rank + 1) : undefined}
           fileLabel={rank === 0 ? FILES[file] : undefined}

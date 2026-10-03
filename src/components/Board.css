@@ -73,9 +73,42 @@
   }
 }
 
+.square-last::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: var(--color-square-last);
+  pointer-events: none;
+}
+
+.check-pulse {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: var(--color-square-check);
+  pointer-events: none;
+  animation: check-pulse 1.2s var(--ease-out) infinite;
+}
+
+@keyframes check-pulse {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .square-selected::after {
     animation: none;
+  }
+
+  .check-pulse {
+    animation: none;
+    opacity: 0.75;
   }
 }
 

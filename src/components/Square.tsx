@@ -11,6 +11,8 @@ type SquareProps = {
   light: boolean
   piece: PieceCode
   selected: boolean
+  last: boolean
+  inCheck: boolean
   target: SquareTarget | null
   rankLabel?: string
   fileLabel?: string
@@ -22,6 +24,8 @@ export function Square({
   light,
   piece,
   selected,
+  last,
+  inCheck,
   target,
   rankLabel,
   fileLabel,
@@ -30,16 +34,19 @@ export function Square({
   const tone = light ? 'square-light' : 'square-dark'
   const classes = ['square', tone]
   if (selected) classes.push('square-selected')
+  if (last) classes.push('square-last')
+  if (inCheck) classes.push('square-check')
 
   return (
     <button
       type="button"
       className={classes.join(' ')}
-      aria-label={squareLabel(square, piece, target)}
+      aria-label={squareLabel(square, piece, target, inCheck)}
       aria-pressed={selected}
       onClick={() => onChoose(square)}
     >
       {piece !== EMPTY && <Piece piece={piece} decorative />}
+      {inCheck && <span className="check-pulse" />}
       {target === 'quiet' && <span className="move-dot" />}
       {target === 'capture' && <span className="capture-ring" />}
       {rankLabel !== undefined && <span className="coord coord-rank">{rankLabel}</span>}
@@ -48,9 +55,15 @@ export function Square({
   )
 }
 
-function squareLabel(square: SquareIndex, piece: PieceCode, target: SquareTarget | null): string {
+function squareLabel(
+  square: SquareIndex,
+  piece: PieceCode,
+  target: SquareTarget | null,
+  inCheck: boolean,
+): string {
   const name = squareToAlgebraic(square)
   const occupant = piece === EMPTY ? '' : `, ${pieceName(piece)}`
   const action = target === 'capture' ? ', capture' : target === 'quiet' ? ', legal move' : ''
-  return `${name}${occupant}${action}`
+  const check = inCheck ? ', in check' : ''
+  return `${name}${occupant}${action}${check}`
 }

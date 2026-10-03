@@ -2,6 +2,7 @@ import './App.css'
 import { StubGame } from './engine/stubGame.ts'
 import { Atmosphere } from './components/Atmosphere.tsx'
 import { Board } from './components/Board.tsx'
+import { MoveList } from './components/MoveList.tsx'
 import { PieceDefs } from './components/Piece.tsx'
 import { createGameStore, useGameStore } from './state/gameStore.ts'
 
@@ -22,10 +23,14 @@ function App() {
               board={game.position.board}
               selected={game.selected}
               moves={game.movesFromSelection}
+              lastMove={game.lastMove}
+              checkSquare={game.status.checkSquare}
               onChoose={gameStore.chooseSquare}
             />
           </section>
-          <aside className="side-stage" aria-label="Game" />
+          <aside className="side-stage">
+            <MoveList history={game.history} fullmoveNumber={game.position.fullmoveNumber} />
+          </aside>
         </div>
       </main>
     </>
