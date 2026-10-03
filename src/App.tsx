@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import { StubGame } from './engine/stubGame.ts'
+import { Game } from './engine/game.ts'
 import { Atmosphere } from './components/Atmosphere.tsx'
 import { Board } from './components/Board.tsx'
 import { GameOver } from './components/GameOver.tsx'
@@ -10,7 +10,7 @@ import { PieceDefs } from './components/Piece.tsx'
 import { PromotionDialog } from './components/PromotionDialog.tsx'
 import { createGameStore, useGameStore } from './state/gameStore.ts'
 
-const gameStore = createGameStore(new StubGame())
+const gameStore = createGameStore(new Game())
 
 function App() {
   const game = useGameStore(gameStore)

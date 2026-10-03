@@ -58,6 +58,11 @@ export interface Position {
   halfmoveClock: number
   /** Starts at 1 and increments after each black move. */
   fullmoveNumber: number
+  /**
+   * Zobrist key of the pieces, the side to move, the castling rights and the
+   * en passant file. The clocks are not part of it.
+   */
+  key: bigint
 }
 
 export function clonePosition(position: Position): Position {

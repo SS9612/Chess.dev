@@ -16,6 +16,7 @@ import {
   squareToAlgebraic,
 } from './board'
 import { START_FEN, parseFen, toFen } from './fen'
+import { hashPosition } from './zobrist'
 import type { GameApi, GameStatus, MoveRecord } from './gameApi'
 import type { Color, Move, PieceType, Square } from './types'
 import {
@@ -228,6 +229,7 @@ export class StubGame implements GameApi {
       isPawnMove || move.captured !== EMPTY ? 0 : this.position().halfmoveClock + 1
     if (next.turn === BLACK) next.fullmoveNumber++
     next.turn = opposite(next.turn)
+    next.key = hashPosition(next)
 
     this.positions.push(next)
     this.records.push({ move, san: san ?? describeSan(move), fen: toFen(next) })

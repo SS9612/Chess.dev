@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { algebraicToSquare } from '../engine/board'
+import { algebraicToSquare, squareToAlgebraic } from '../engine/board'
 import { START_FEN } from '../engine/fen'
+import { Game } from '../engine/game'
 import { StubGame } from '../engine/stubGame'
 import { BLACK, EMPTY, QUEEN, WHITE, makePiece } from '../engine/types'
 import { createGameStore } from './gameStore'
@@ -216,5 +217,37 @@ describe('history controls', () => {
     store.reset(fen)
     expect(store.getSnapshot().fen).toBe(fen)
     expect(store.getSnapshot().turn).toBe(BLACK)
+  })
+})
+
+describe('real rules through the store', () => {
+  it('keeps moving a knight like a knight after it leaves home', () => {
+    const store = createGameStore(new Game())
+    store.chooseSquare(sq('g1'))
+    store.chooseSquare(sq('f3'))
+    store.chooseSquare(sq('f3'))
+    expect(store.getSnapshot().selected).toBeNull()
+
+    store.chooseSquare(sq('e7'))
+    store.chooseSquare(sq('e5'))
+    store.chooseSquare(sq('f3'))
+
+    const destinations = store
+      .getSnapshot()
+      .movesFromSelection.map((move) => squareToAlgebraic(move.to))
+      .sort()
+    expect(destinations).toEqual(['d4', 'e5', 'g1', 'g5', 'h4'])
+    expect(store.getSnapshot().history.map((record) => record.san)).toEqual(['Nf3', 'e5'])
+  })
+
+  it('promotes through the dialog with the real piece', () => {
+    const store = createGameStore(new Game('7k/4P3/8/8/8/8/8/4K3 w - - 0 1'))
+    store.chooseSquare(sq('e7'))
+    store.chooseSquare(sq('e8'))
+    expect(store.getSnapshot().pendingPromotion).toEqual({ from: sq('e7'), to: sq('e8') })
+
+    store.confirmPromotion(QUEEN)
+    expect(store.getSnapshot().position.board[sq('e8')]).toBe(makePiece(WHITE, QUEEN))
+    expect(store.getSnapshot().history[0].san).toBe('e8=Q+')
   })
 })

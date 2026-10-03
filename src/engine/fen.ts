@@ -27,6 +27,7 @@ import {
 } from './board'
 import type { Color } from './types'
 import { BLACK, EMPTY, WHITE } from './types'
+import { hashPosition } from './zobrist'
 
 export const START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 
@@ -43,14 +44,17 @@ export function parseFen(fen: string): Position {
     throw new Error(`FEN needs at least 4 fields, got ${fields.length}: "${fen}"`)
   }
 
-  return {
+  const position: Position = {
     board: parsePlacement(fields[0]),
     turn: parseTurn(fields[1]),
     castling: parseCastling(fields[2]),
     epSquare: parseEpSquare(fields[3]),
     halfmoveClock: fields.length > 4 ? parseCount(fields[4], 'halfmove clock') : 0,
     fullmoveNumber: fields.length > 5 ? parseCount(fields[5], 'fullmove number') : 1,
+    key: 0n,
   }
+  position.key = hashPosition(position)
+  return position
 }
 
 export function toFen(position: Position): string {
