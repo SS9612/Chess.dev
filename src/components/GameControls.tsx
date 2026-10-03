@@ -1,7 +1,8 @@
 import './GameControls.css'
+import type { Difficulty } from '../opponent/context.ts'
 
 export type Orientation = 'white' | 'black'
-export type Difficulty = 'easy' | 'medium' | 'hard'
+export type { Difficulty }
 
 type GameControlsProps = {
   canUndo: boolean

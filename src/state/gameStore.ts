@@ -10,8 +10,11 @@ import { useSyncExternalStore } from 'react'
 import { clonePosition } from '../engine/board'
 import type { Position } from '../engine/board'
 import type { GameApi, GameStatus, MoveRecord } from '../engine/gameApi'
+import { acceptReply } from '../opponent/acceptReply'
+import { buildMoveContext } from '../opponent/context'
+import type { Difficulty, MoveContext } from '../opponent/context'
 import type { Color, Move, PieceType, Square } from '../engine/types'
-import { EMPTY, isColor, isPromotion } from '../engine/types'
+import { BLACK, EMPTY, WHITE, isColor, isPromotion } from '../engine/types'
 
 export interface PendingPromotion {
   from: Square
@@ -31,6 +34,8 @@ export interface GameSnapshot {
   pendingPromotion: PendingPromotion | null
   canUndo: boolean
   canRedo: boolean
+  difficulty: Difficulty
+  thinking: boolean
 }
 
 type Listener = () => void
@@ -46,12 +51,25 @@ export interface GameStore {
   undo: () => void
   redo: () => void
   reset: (fen?: string) => void
+  setDifficulty: (difficulty: Difficulty) => void
 }
 
-export function createGameStore(game: GameApi): GameStore {
+export interface GameStoreOptions {
+  /** When set, this chooses Black's reply after White moves. */
+  chooseMove?: (context: MoveContext) => Promise<string | null>
+  /** How long a fast reply stays on screen as thinking, in milliseconds. */
+  pauseMs?: number
+}
+
+export function createGameStore(game: GameApi, options: GameStoreOptions = {}): GameStore {
   const listeners = new Set<Listener>()
+  const chooseMove = options.chooseMove
+  const pauseMs = options.pauseMs ?? 0
   let selected: Square | null = null
   let pendingPromotion: PendingPromotion | null = null
+  let difficulty: Difficulty = 'medium'
+  let thinking = false
+  let request = 0
   let snapshot = capture()
 
   function capture(): GameSnapshot {
@@ -67,6 +85,8 @@ export function createGameStore(game: GameApi): GameStore {
       pendingPromotion,
       canUndo: game.canUndo(),
       canRedo: game.canRedo(),
+      difficulty,
+      thinking,
     }
   }
 
@@ -83,7 +103,8 @@ export function createGameStore(game: GameApi): GameStore {
   }
 
   function chooseSquare(square: Square): void {
-    if (game.status().outcome !== 'playing') return
+    if (thinking || game.status().outcome !== 'playing') return
+    if (chooseMove !== undefined && game.turn() !== WHITE) return
 
     const hadPendingPromotion = pendingPromotion !== null
     pendingPromotion = null
@@ -99,6 +120,7 @@ export function createGameStore(game: GameApi): GameStore {
         game.move(selected, square)
         selected = null
         publish()
+        void replyForBlack()
         return
       }
 
@@ -124,12 +146,13 @@ export function createGameStore(game: GameApi): GameStore {
   }
 
   function confirmPromotion(piece: PieceType): void {
-    if (pendingPromotion === null || game.status().outcome !== 'playing') return
+    if (thinking || pendingPromotion === null || game.status().outcome !== 'playing') return
     const { from, to } = pendingPromotion
     game.move(from, to, piece)
     selected = null
     pendingPromotion = null
     publish()
+    void replyForBlack()
   }
 
   function cancelPromotion(): void {
@@ -139,24 +162,70 @@ export function createGameStore(game: GameApi): GameStore {
   }
 
   function undo(): void {
-    if (!game.undo()) return
+    const wasThinking = thinking
+    cancelReply()
+    if (!game.undo() && !wasThinking) return
     selected = null
     pendingPromotion = null
     publish()
   }
 
   function redo(): void {
-    if (!game.redo()) return
+    const wasThinking = thinking
+    cancelReply()
+    if (!game.redo() && !wasThinking) return
     selected = null
     pendingPromotion = null
     publish()
   }
 
   function reset(fen?: string): void {
+    cancelReply()
     game.reset(fen)
     selected = null
     pendingPromotion = null
     publish()
+  }
+
+  function setDifficulty(next: Difficulty): void {
+    if (difficulty === next) return
+    difficulty = next
+    publish()
+  }
+
+  function cancelReply(): void {
+    request += 1
+    thinking = false
+  }
+
+  async function replyForBlack(): Promise<void> {
+    if (chooseMove === undefined) return
+    if (game.turn() !== BLACK || game.status().outcome !== 'playing') return
+
+    const id = request + 1
+    request = id
+    thinking = true
+    selected = null
+    pendingPromotion = null
+    publish()
+
+    try {
+      const context = buildMoveContext(game, difficulty)
+      const started = Date.now()
+      const answer = await chooseMove(context)
+      if (id !== request) return
+      const remaining = pauseMs - (Date.now() - started)
+      if (remaining > 0) await wait(remaining)
+      if (id !== request) return
+      if (game.turn() === BLACK && game.status().outcome === 'playing') {
+        acceptReply(game, answer ?? '')
+      }
+    } finally {
+      if (id === request) {
+        thinking = false
+        publish()
+      }
+    }
   }
 
   return {
@@ -168,7 +237,12 @@ export function createGameStore(game: GameApi): GameStore {
     undo,
     redo,
     reset,
+    setDifficulty,
   }
+}
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 export function useGameStore(store: GameStore): GameSnapshot {

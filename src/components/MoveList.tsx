@@ -5,9 +5,10 @@ import { moveRows } from './moveRows.ts'
 type MoveListProps = {
   history: MoveRecord[]
   fullmoveNumber: number
+  thinking: boolean
 }
 
-export function MoveList({ history, fullmoveNumber }: MoveListProps) {
+export function MoveList({ history, fullmoveNumber, thinking }: MoveListProps) {
   const rows = moveRows(history, fullmoveNumber)
   const last = history.at(-1)
   const lastIsBlack = last !== undefined && last.move.piece < 0
@@ -34,6 +35,11 @@ export function MoveList({ history, fullmoveNumber }: MoveListProps) {
             )
           })}
         </ol>
+      )}
+      {thinking && (
+        <p className="move-thinking" role="status">
+          Thinking…
+        </p>
       )}
     </section>
   )

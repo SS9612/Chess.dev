@@ -55,9 +55,10 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-lg);
-  font-weight: 600;
+  font-weight: 900;
   letter-spacing: var(--tracking-title);
   text-transform: uppercase;
+  color: var(--color-foam);
   text-shadow: var(--glow-text);
 }
 
@@ -72,17 +73,17 @@
 .game-over-action {
   margin-top: var(--space-2);
   padding: var(--space-2) var(--space-4);
-  border: 1px solid var(--color-cyan);
+  border: 1px solid var(--color-sun);
   border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--color-cyan);
+  background: linear-gradient(180deg, rgba(255, 216, 74, 0.16), transparent);
+  color: var(--color-sun);
   font-family: var(--font-display);
   font-size: var(--text-xs);
-  font-weight: 600;
+  font-weight: 800;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: var(--glow-cyan);
+  box-shadow: var(--glow-sm);
 }
 
 .game-over-action:hover,

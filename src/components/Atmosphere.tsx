@@ -4,9 +4,9 @@ import './Atmosphere.css'
 export function Atmosphere() {
   return (
     <div className="atmosphere" aria-hidden="true">
-      <span className="haze haze-magenta" />
-      <span className="haze haze-violet" />
-      <span className="haze haze-cyan" />
+      <span className="haze haze-sun" />
+      <span className="haze haze-ocean" />
+      <span className="haze haze-palm" />
       <span className="specks" />
     </div>
   )

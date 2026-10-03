@@ -48,13 +48,13 @@ export function PieceDefs() {
       <defs>
         <linearGradient id="piece-light" x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="42%" stopColor="#d7e2ee" />
-          <stop offset="100%" stopColor="#7f93a8" />
+          <stop offset="42%" stopColor="#eef6ff" />
+          <stop offset="100%" stopColor="#9bb4c8" />
         </linearGradient>
         <linearGradient id="piece-dark" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#d2c4ea" />
-          <stop offset="34%" stopColor="#7a68a0" />
-          <stop offset="100%" stopColor="#322844" />
+          <stop offset="0%" stopColor="#5fd0a0" />
+          <stop offset="34%" stopColor="#1f6b6b" />
+          <stop offset="100%" stopColor="#12353a" />
         </linearGradient>
       </defs>
     </svg>

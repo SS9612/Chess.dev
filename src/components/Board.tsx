@@ -15,6 +15,7 @@ type BoardProps = {
   lastMove: Move | null
   checkSquare: SquareIndex
   orientation: 'white' | 'black'
+  disabled?: boolean
   onChoose: (square: SquareIndex) => void
 }
 
@@ -26,6 +27,7 @@ export function Board({
   lastMove,
   checkSquare,
   orientation,
+  disabled = false,
   onChoose,
 }: BoardProps) {
   const targets = new Map<number, SquareTarget>()
@@ -58,6 +60,7 @@ export function Board({
           taken={takenOn === square && lastMove !== null ? lastMove.captured : null}
           rankLabel={file === leftFile ? String(rank + 1) : undefined}
           fileLabel={rank === bottomRank ? FILES[file] : undefined}
+          disabled={disabled}
           onChoose={onChoose}
         />,
       )

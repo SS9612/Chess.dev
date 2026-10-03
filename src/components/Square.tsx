@@ -18,6 +18,7 @@ type SquareProps = {
   taken: PieceCode | null
   rankLabel?: string
   fileLabel?: string
+  disabled?: boolean
   onChoose: (square: SquareIndex) => void
 }
 
@@ -33,6 +34,7 @@ export function Square({
   taken,
   rankLabel,
   fileLabel,
+  disabled = false,
   onChoose,
 }: SquareProps) {
   const tone = light ? 'square-light' : 'square-dark'
@@ -47,6 +49,7 @@ export function Square({
       className={classes.join(' ')}
       aria-label={squareLabel(square, piece, target, inCheck)}
       aria-pressed={selected}
+      disabled={disabled}
       onClick={() => onChoose(square)}
     >
       {taken !== null && <Piece piece={taken} decorative taken />}
