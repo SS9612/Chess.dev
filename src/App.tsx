@@ -18,7 +18,12 @@ function App() {
         <h1>Chess</h1>
         <div className="stage">
           <section className="board-stage" aria-label="Chessboard">
-            <Board board={game.position.board} />
+            <Board
+              board={game.position.board}
+              selected={game.selected}
+              moves={game.movesFromSelection}
+              onChoose={gameStore.chooseSquare}
+            />
           </section>
           <aside className="side-stage" aria-label="Game" />
         </div>

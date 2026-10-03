@@ -3,9 +3,11 @@ import type { Piece } from '../engine/types.ts'
 
 type PieceProps = {
   piece: Piece
+  /** The square button names the piece, so the graphic itself stays silent. */
+  decorative?: boolean
 }
 
-export function Piece({ piece }: PieceProps) {
+export function Piece({ piece, decorative = false }: PieceProps) {
   const markup = pieceMarkup(piece)
   if (markup === null) return null
 
@@ -14,8 +16,9 @@ export function Piece({ piece }: PieceProps) {
   return (
     <span
       className={`piece piece-${side}`}
-      role="img"
-      aria-label={pieceName(piece)}
+      role={decorative ? undefined : 'img'}
+      aria-hidden={decorative || undefined}
+      aria-label={decorative ? undefined : pieceName(piece)}
       dangerouslySetInnerHTML={{ __html: markup }}
     />
   )

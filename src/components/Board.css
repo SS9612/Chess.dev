@@ -11,6 +11,72 @@
 
 .square {
   position: relative;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.square:focus-visible {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: -3px;
+  z-index: 4;
+}
+
+.square-selected::after {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  inset: 4%;
+  border: 2px solid var(--color-selection);
+  border-radius: 50%;
+  box-shadow: var(--glow-sm);
+  pointer-events: none;
+  animation: selection-pulse 1.4s var(--ease-out) infinite;
+}
+
+.move-dot {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: 22%;
+  height: 22%;
+  border-radius: 50%;
+  background: var(--color-move-dot);
+  box-shadow: var(--glow-cyan);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.capture-ring {
+  position: absolute;
+  z-index: 3;
+  inset: 3%;
+  border: 3px solid var(--color-capture);
+  border-radius: 50%;
+  box-shadow: var(--glow-sm);
+  pointer-events: none;
+}
+
+@keyframes selection-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.92);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .square-selected::after {
+    animation: none;
+  }
 }
 
 .piece {
