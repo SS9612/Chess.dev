@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { pieceMarkup, pieceName } from './pieceArt.ts'
 import type { Piece } from '../engine/types.ts'
 
@@ -5,20 +6,36 @@ type PieceProps = {
   piece: Piece
   /** The square button names the piece, so the graphic itself stays silent. */
   decorative?: boolean
+  /** Screen-square offset the slide starts from. Omitted when the piece is still. */
+  travel?: { x: number; y: number } | null
+  /** Fades out. Used for the piece that was just taken. */
+  taken?: boolean
 }
 
-export function Piece({ piece, decorative = false }: PieceProps) {
+export function Piece({ piece, decorative = false, travel = null, taken = false }: PieceProps) {
   const markup = pieceMarkup(piece)
   if (markup === null) return null
 
   const side = piece > 0 ? 'white' : 'black'
+  const moving = travel !== null && !taken
+  const classes = ['piece', `piece-${side}`]
+  if (moving) classes.push('piece-moving')
+  if (taken) classes.push('piece-taken')
 
   return (
     <span
-      className={`piece piece-${side}`}
+      className={classes.join(' ')}
       role={decorative ? undefined : 'img'}
       aria-hidden={decorative || undefined}
       aria-label={decorative ? undefined : pieceName(piece)}
+      style={
+        moving
+          ? ({
+              '--from-x': travel.x,
+              '--from-y': travel.y,
+            } as CSSProperties)
+          : undefined
+      }
       dangerouslySetInnerHTML={{ __html: markup }}
     />
   )

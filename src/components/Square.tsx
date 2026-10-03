@@ -14,6 +14,8 @@ type SquareProps = {
   last: boolean
   inCheck: boolean
   target: SquareTarget | null
+  travel: { x: number; y: number } | null
+  taken: PieceCode | null
   rankLabel?: string
   fileLabel?: string
   onChoose: (square: SquareIndex) => void
@@ -27,6 +29,8 @@ export function Square({
   last,
   inCheck,
   target,
+  travel,
+  taken,
   rankLabel,
   fileLabel,
   onChoose,
@@ -45,7 +49,8 @@ export function Square({
       aria-pressed={selected}
       onClick={() => onChoose(square)}
     >
-      {piece !== EMPTY && <Piece piece={piece} decorative />}
+      {taken !== null && <Piece piece={taken} decorative taken />}
+      {piece !== EMPTY && <Piece piece={piece} decorative travel={travel} />}
       {inCheck && <span className="check-pulse" />}
       {target === 'quiet' && <span className="move-dot" />}
       {target === 'capture' && <span className="capture-ring" />}

@@ -17,6 +17,23 @@
   font: inherit;
   color: inherit;
   cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.square-light:hover {
+  background-color: color-mix(in srgb, var(--color-text) 14%, var(--color-square-light));
+}
+
+.square-dark:hover {
+  background-color: color-mix(in srgb, var(--color-text) 10%, var(--color-square-dark));
+}
+
+.square-light:active {
+  background-color: color-mix(in srgb, var(--color-bg) 28%, var(--color-square-light));
+}
+
+.square-dark:active {
+  background-color: color-mix(in srgb, var(--color-bg) 22%, var(--color-square-dark));
 }
 
 .square:focus-visible {
@@ -110,6 +127,15 @@
     animation: none;
     opacity: 0.75;
   }
+
+  .piece-moving,
+  .piece-taken {
+    animation: none;
+  }
+
+  .piece-taken {
+    opacity: 0;
+  }
 }
 
 .piece {
@@ -132,6 +158,38 @@
 
 .piece-black {
   filter: drop-shadow(0 0 3px var(--color-magenta));
+}
+
+.piece-moving {
+  z-index: 4;
+  animation: piece-slide var(--duration-normal) var(--ease-out);
+}
+
+.piece-taken {
+  z-index: 1;
+  animation: piece-taken calc(var(--duration-normal) * 2) var(--ease-out) forwards;
+}
+
+@keyframes piece-taken {
+  0%,
+  35% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+}
+
+.square:has(.piece-moving) {
+  z-index: 4;
+}
+
+@keyframes piece-slide {
+  from {
+    transform: translate(calc(var(--from-x) * 12.5cqi), calc(var(--from-y) * 12.5cqi));
+  }
 }
 
 .square-light {

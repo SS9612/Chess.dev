@@ -40,6 +40,10 @@
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .control-button:hover:not(:disabled) {

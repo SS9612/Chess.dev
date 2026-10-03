@@ -4,6 +4,7 @@ import { isLightSquare, squareOf } from '../engine/board.ts'
 import type { Move, Square as SquareIndex } from '../engine/types.ts'
 import { isCapture } from '../engine/types.ts'
 import { Square, type SquareTarget } from './Square.tsx'
+import { capturedSquare, moveTravel } from './moveTravel.ts'
 
 const FILES = 'abcdefgh'
 
@@ -37,6 +38,8 @@ export function Board({
   const leftFile = files[0]
   const bottomRank = ranks[ranks.length - 1]
 
+  const takenOn = capturedSquare(lastMove)
+
   const squares = []
   for (const rank of ranks) {
     for (const file of files) {
@@ -51,6 +54,8 @@ export function Board({
           last={square === lastMove?.from || square === lastMove?.to}
           inCheck={square === checkSquare}
           target={targets.get(square) ?? null}
+          travel={moveTravel(square, lastMove, orientation)}
+          taken={takenOn === square && lastMove !== null ? lastMove.captured : null}
           rankLabel={file === leftFile ? String(rank + 1) : undefined}
           fileLabel={rank === bottomRank ? FILES[file] : undefined}
           onChoose={onChoose}
