@@ -1,0 +1,74 @@
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--radius-md) - 2px);
+  overflow: hidden;
+  container-type: inline-size;
+}
+
+.square {
+  position: relative;
+}
+
+.piece {
+  position: absolute;
+  inset: 5%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.piece svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.piece-white {
+  filter: drop-shadow(0 0 3px var(--color-cyan));
+}
+
+.piece-black {
+  filter: drop-shadow(0 0 3px var(--color-magenta));
+}
+
+.square-light {
+  background: var(--color-square-light);
+}
+
+.square-dark {
+  background: var(--color-square-dark);
+}
+
+.coord {
+  position: absolute;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-size: clamp(9px, 2.4cqi, 13px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  user-select: none;
+}
+
+.square-light .coord {
+  color: color-mix(in srgb, var(--color-text) 58%, transparent);
+}
+
+.square-dark .coord {
+  color: color-mix(in srgb, var(--color-text) 84%, transparent);
+}
+
+.coord-rank {
+  top: 0.35em;
+  left: 0.4em;
+}
+
+.coord-file {
+  right: 0.4em;
+  bottom: 0.3em;
+}

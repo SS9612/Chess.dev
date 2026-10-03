@@ -1,15 +1,11 @@
-:root {
-  --bg: #2b2825;
-  --surface: #3a3632;
-  --text: #ece7e1;
-  --text-muted: #a49c92;
-  --accent: #6b9c62;
+@import './styles/tokens.css';
 
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  line-height: 1.5;
+:root {
+  font-family: var(--font-body);
+  line-height: var(--leading-body);
   color-scheme: dark;
-  color: var(--text);
-  background-color: var(--bg);
+  color: var(--color-text);
+  background-color: var(--color-bg);
 }
 
 * {
